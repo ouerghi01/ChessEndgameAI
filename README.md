@@ -34,6 +34,8 @@ Welcome to **ChessEndgameAI**, a project dedicated to exploring the fascinating 
 2. Install the required packages:
    pip install -r requirements.txt
 ### Usage
-python main.py
+   ````bash
+
+   python main.py
 
 
