@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chess Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0; /* Remove default margin */
+        }
+        img {
+            width: 400px; /* Adjust size as needed */
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- The chess board image (SVG) -->
+    <img id="chessboard" src="/static/board.svg" alt="Chess Board">
+
+    <script>
+        // Function to update the SVG image without reloading the page
+        function updateBoard() {
+            const board = document.getElementById("chessboard");
+            
+            // Update the source with a timestamp to prevent caching issues
+            board.src = "/static/board.svg?" + new Date().getTime();
+        }
+
+        // Refresh the board every second (1000 ms)
+        setInterval(updateBoard, 1000);
+    </script>
+
+</body>
+</html>
