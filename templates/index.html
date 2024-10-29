@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chess Game</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header">
+    <h1 id="hx">Real-Time Chess Game</h1>
+    <div class="multiplechoices">
+        <div class="tooltip-container">
+
+        <button class="choice" id="play_choice">
+            <!-- SVG icon for Player vs Agent -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-person" viewBox="0 0 16 16">
+                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 14s-1 0-1-1 1-4 7-4 7 3 7 4-1 1-1 1H2z"/>
+            </svg>
+            Player vs Agent
+            <span class="tooltip">This is for testing the agent</span>
+        </button>
+        </div>
+    
+        <div class="tooltip-container">
+            <button class="choice" id="stockfish_choice">
+                <!-- SVG icon for Stockfish vs Agent -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 32 32">
+                    <path fill="currentColor" d="M18 10h2v2h-2zm-6 0h2v2h-2z"/>
+                    <path fill="currentColor" d="M26 20h-5v-2h1a2 2 0 0 0 2-2v-4h2v-2h-2V8a2 2 0 0 0-2-2h-2V2h-2v4h-4V2h-2v4h-2a2 2 0 0 0-2 2v2H6v2h2v4a2 2 0 0 0 2 2h1v2H6a2 2 0 0 0-2 2v8h2v-8h20v8h2v-8a2 2 0 0 0-2-2M10 8h12v8H10Zm3 10h6v2h-6Z"/>
+                </svg>
+                Stockfish vs Agent
+            </button>
+            <span class="tooltip">This is for training the agent</span>
+        </div>
+        
+    </div>
+
+    </div>
+    
+
+    <div  id="legal_x" class="legal">
+        <div class="tooltip-container">
+        <p >These are your legal moves: Choose one on your turn.</p>
+        <div id="possible_moves"></div>
+        <span class="tooltip">This is for player to play the next move</span>
+        </div>
+    
+    </div>
+    
+    
+    <div id="Resulta"></div>
+
+    <div id="game" class="container_game">
+        <div id="black" class="player">Black (Agent)</div>
+        <img id="chessboard" src="/static/board.svg" alt="Chess Board">
+        <div id="white" class="player">White</div>
+    </div>
+    
+    <script>
+        let lastLegalMoves = [];
+        let lastScrollY = window.scrollY;
+
+
+        const chess =document.getElementById("game");
+        const legal = document.getElementById("legal_x");
+        const resulta = document.getElementById("Resulta");
+        chess.style.display = "none";
+        legal.style.display = "none";
+        resulta.style.display= "none";
+        const playChoice = document.getElementById("play_choice");
+        const stockfishChoice = document.getElementById("stockfish_choice");
+        playChoice.addEventListener("click", () => {
+            fetch("http://localhost:5000/play", { method: "POST" });
+            chess.style.display = "block";
+            legal.style.display = "block";
+            resulta.style.display= "block";
+        });
+        stockfishChoice.addEventListener("click", () => {
+            fetch("http://localhost:5000/stockfish", { method: "POST" });
+            chess.style.display = "block";
+            legal.style.display = "block";
+            legal.style.display= "none";
+            resulta.style.display= "block";
+        });
+    
+
+        async function legalMoves() {
+    try {
+        const response = await fetch("http://localhost:5000/moves");
+
+        // Check if the response is ok (status 200-299)
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const moves = await response.json();  // Parse JSON if available
+
+            // Check if there are new moves
+            if (JSON.stringify(moves.legal_moves) !== JSON.stringify(lastLegalMoves)) {
+                lastLegalMoves = moves.legal_moves;
+
+                const ul = document.createElement("ul");
+
+                // Create list items for each legal move
+                moves.legal_moves.forEach((move) => {
+                    const li = document.createElement("li");
+                    li.textContent = move;
+                    li.classList.add("move-item"); // Add class for styling
+                    li.addEventListener("click", async () => {
+                        try {
+                            const moveResponse = await fetch("http://localhost:5000/move_piece", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ move }),  // Send move as JSON
+                            });
+
+                            // Check if the move response is ok
+                            if (!moveResponse.ok) {
+                                throw new Error("Network response was not ok when submitting move");
+                            }
+
+                            // Move was successful, fetch updated moves
+                            legalMoves();
+                        } catch (error) {
+                            console.error("Failed to make a move:", error);
+                        }
+                    });
+
+                    ul.appendChild(li);
+                });
+
+                // Add styles to the unordered list
+                ul.classList.add("move-list"); // Add class for styling
+
+                const possibleMoves = document.getElementById("possible_moves");
+                possibleMoves.innerHTML = "";  // Clear previous moves
+                possibleMoves.appendChild(ul);
+                possibleMoves.scrollIntoView();  // Scroll to the moves
+            }
+        } else {
+            const textResponse = await response.text();
+            console.log("Unexpected response:", textResponse);
+        }
+    } catch (error) {
+        console.error("Failed to get possible moves:", error);
+    }
+}
+function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(null, args);
+        }, delay);
+    };
+}
+
+const debouncedLegalMoves = debounce(legalMoves, 1000);
+
+// Call legalMoves on a regular interval, but only request new moves if the board state changes
+setInterval(debouncedLegalMoves , 2000);  // Reduced interval to 2 seconds to avoid overwhelming the server
+
+        async function getResult() {
+            try {
+                const response = await fetch("http://localhost:5000/result");
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const result = await response.json();
+                const resultContainer = document.getElementById("Resulta");
+                const p = document.createElement("p");
+                const text = document.createTextNode(result['reason']);
+                p.textContent = "Game Result: ";
+                p.textContent = "Game Result: " + result["resulta"];
+                resultContainer.innerHTML = "";  // Clear previous result
+                resultContainer.appendChild(p);
+                resultContainer.appendChild(text);
+                resultContainer.scrollIntoView();  // Scroll to the result
+            
+            } catch (error) {
+                console.error("Failed to get the game result:", error);
+            }
+        }
+
+        setInterval(getResult, 1000);
+
+        async function updateBoard() {
+            try {
+                const response = await fetch("http://localhost:5000/board");
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const svgContent = await response.text();
+                const tempImage = new Image();
+                const blob = new Blob([svgContent], { type: "image/svg+xml" });
+                const url = URL.createObjectURL(blob);
+                tempImage.onload = () => {
+                    const boardContainer = document.getElementById("chessboard");
+                    boardContainer.src = url;
+                    URL.revokeObjectURL(url);
+                };
+                tempImage.src = url;
+            } catch (error) {
+                console.error("Failed to update the chessboard:", error);
+            }
+        }
+        
+
+        // Refresh the board every second (1000 ms)
+        setInterval(updateBoard, 1000);
+    </script>
+</body>
+</html>

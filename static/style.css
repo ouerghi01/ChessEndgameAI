@@ -1,0 +1,224 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Roboto', sans-serif; /* Use Google's Roboto for a modern look */
+    background-image: url('/static/chess_back.jpeg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    color: #333;
+    
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dims the background image */
+    z-index: -1; /* Keeps the overlay behind content */
+}
+
+h1 {
+    font-size: 48px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 1.2px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+
+.legal {
+    position: absolute;  /* Allow precise positioning */
+    top: 45%;  /* Vertically center the element */
+    left: 20px;  /* Align to the left with some margin */
+    transform: translateY(-50%);  /* Adjust for perfect vertical centering */
+    max-width: 300px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1;  /* Ensure it stays above background elements */
+    
+}
+
+@media (max-width: 768px) {
+    .legal {
+        position: static;  /* In mobile views, position it normally */
+        transform: none;
+        margin: 20px auto;  /* Center it horizontally on smaller screens */
+    }
+}
+
+.container_game {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    position: relative;
+}
+
+#chessboard {
+    margin: 0 30px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.player {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+}
+
+#black {
+    color: blue;
+    font-size: 30px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    
+}
+
+#white {
+    color: #FFD700;
+}
+
+#possible_moves {
+    border: 1px solid #ccc;
+    padding: 15px;
+    background-color: #fafafa;
+    border-radius: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 20px;
+    width: 90%;  /* Ensure it takes up full width of its container */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    scroll-behavior: auto; /* Disable smooth scrolling for this element */
+}
+#possible_moves:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.move-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.move-item {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background-color: #f1f1f1;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.move-item:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px); /* Subtle lift effect */
+    cursor: pointer;
+}
+
+p {
+    font-size: 24px;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    margin: 10px 0;
+    text-align: left;
+    background-color: rgba(0, 0, 0, 0.4); /* Add a semi-transparent background */
+    padding: 15px;
+    border-radius: 8px;
+    letter-spacing: 1.1px;
+}
+
+#Resulta {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 30px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    position: relative;
+    left: 380px;
+    top: 300px;
+    border: 1px solid crimson;
+}
+
+.multiplechoices {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.choice {
+    font-size: 18px;
+    padding: 12px 24px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex; /* Align icon and text */
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    transition: background-color 0.3s ease;
+}
+
+.choice svg {
+    width: 20px;
+    height: 20px;
+    fill: white; /* Ensures the SVG icons are white like the text */
+}
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 150px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%; /* Position the tooltip above the button */
+    left: 50%;
+    margin-left: -75px; /* Center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1; /* Show the tooltip on hover */
+}
+
+.choice:hover {
+    background-color: #0056b3;
+}
+
+.choice:hover {
+    background-color: #357ae8;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.choice:active {
+    background-color: #2a65c7;
+}
+
+img {
+    width: 450px;
+    height: auto;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}

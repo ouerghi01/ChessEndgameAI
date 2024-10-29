@@ -1,0 +1,6 @@
+https://stackoverflow.com/questions/71945463/how-can-i-use-stockfish-in-python-so-that-the-evaluation-is-continuously-updated
+https://medium.com/@waleedmousa975/a-step-by-step-guide-to-developing-a-chess-game-with-an-ai-opponent-using-python-e06374fcc04a
+https://github.com/nadeem4/chess_engine_using_python/blob/main/chess_engine_using_quiescence_search.ipynb
+https://freedium.cfd/https://medium.com/analytics-vidhya/building-a-powerful-dqn-in-tensorflow-2-0-explanation-tutorial-d48ea8f3177a
+https://github.com/Ish2K/Chess-Bot-AI-Algorithms/blob/main/Git_chess/alpha_beta_pruning.py
+https://stackoverflow.com/questions/75546363/who-to-start-as-black-in-stockfish-python
