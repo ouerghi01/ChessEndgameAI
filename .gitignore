@@ -1,3 +1,4 @@
 # Ignore large files and directories
+
 .env/
 static/lichess_db_standard_rated_2013-06.pgn
